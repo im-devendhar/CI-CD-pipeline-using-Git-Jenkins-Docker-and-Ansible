@@ -57,7 +57,7 @@ UNREACHABLE! => Failed to connect to the host via ssh: Host key verification fai
 This usually happens because Ansible cannot authenticate with the EC2 instance over SSH.
 The fix is to ensure the **private key (`Dev.pem`)** is available on the EC2 instance where Jenkins/Ansible is running.
 
-##  Step 1: Copy `Dev.pem` into EC2 Instance
+##  Step 1: Copy `prod.pem` into EC2 Instance
 
 Run this command from your **local machine** (where you downloaded the `.pem` file from AWS):
 
