@@ -105,7 +105,7 @@ Now you can run:
 ansible-playbook -i inventory deploy.yml
 ```
 
-Ansible should connect successfully to your EC2 instance using the copied `Dev.pem`.
+Ansible should connect successfully to your EC2 instance using the copied `prod.pem`.
 
 ---
 
