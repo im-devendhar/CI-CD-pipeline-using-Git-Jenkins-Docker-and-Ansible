@@ -62,15 +62,14 @@ The fix is to ensure the **private key (`Dev.pem`)** is available on the EC2 ins
 Run this command from your **local machine** (where you downloaded the `.pem` file from AWS):
 
 ```bash
-scp -i "C:/Users/DEVENDHAR B/Downloads/Dev.pem" \
-"C:/Users/DEVENDHAR B/Downloads/Dev.pem" \
-ubuntu@<EC2_PUBLIC_IP>:/home/ubuntu/
+aws s3 cp s3://pem-webserver/prod.pem /home/ubuntu/prod.pem
+chmod 400 /home/ubuntu/prod.pem
 ```
 
  What this does:
 
-* `-i "Dev.pem"` → Uses the key to authenticate with the EC2 instance.
-* Copies the file `Dev.pem` → Into `/home/ubuntu/` on the EC2 instance.
+* `-i "prod.pem"` → Uses the key to authenticate with the EC2 instance.
+* Copies the file `prod.pem` → Into `/home/ubuntu/` on the EC2 instance.
 
 ---
 
@@ -79,7 +78,7 @@ ubuntu@<EC2_PUBLIC_IP>:/home/ubuntu/
 Log into your EC2 instance and set restrictive permissions:
 
 ```bash
-chmod 400 /home/ubuntu/Dev.pem
+chmod 400 /home/ubuntu/prod.pem
 ```
 
 This prevents SSH from rejecting the key because of insecure permissions.
@@ -93,7 +92,7 @@ Update your **inventory** file (e.g., `inventory`):
 
 ```ini
 [web]
-3.95.6.197 ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/Dev.pem
+3.95.6.197 ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/prod.pem
 ```
 
 ---
