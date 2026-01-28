@@ -5,7 +5,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('poc9')
+                    docker.build('myapp:v1')
                 }
             }
         }
@@ -13,9 +13,9 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 sh '''
-                    docker stop poc9-container || true
-                    docker rm poc9-container || true
-                    docker run -d -p 8090:8090 --name poc9-container poc9
+                    docker stop myapp-container || true
+                    docker rm myapp-container || true
+                    docker run -d -p 8090:8090 --name myapp-container myapp:v1
                 '''
             }
         }

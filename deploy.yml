@@ -1,16 +1,18 @@
-- name: Deploy POC-9 Docker container
+- name: Deploy Docker container
   hosts: webservers
   become: yes
+
   tasks:
-    - name: Pull Docker image
+    - name: Docker image on target servers
       docker_image:
-        name: poc9
+        name: myapp
+        tag: v1
         source: local
 
     - name: Run Docker container
       docker_container:
-        name: poc9-container
-        image: poc9
+        name: myapp-container
+        image: myapp:v1
         state: started
         ports:
           - "8090:8090"
