@@ -82,19 +82,26 @@ This is required for Ansible EC2 Plugin filtering.
 `inventory/aws_ec2.yml`
 
 ```yaml
-plugin: aws_ec2
+plugin: amazon.aws.aws_ec2
 regions:
   - us-east-1
 
 filters:
+  instance-state-name: running
   tag:role: webserver
 
 hostnames:
   - private-ip-address
 
 compose:
-  ansible_user: "'ubuntu'"
-  ansible_ssh_private_key_file: "'/home/ubuntu/.ssh/prod.pem'"
+  ansible_host: private_ip_address
+  ansible_user: ubuntu
+  ansible_ssh_private_key_file: /home/ubuntu/.ssh/prod.pem
+
+keyed_groups:
+  - key: tags.role
+    prefix: ""
+    separator: ""
 ```
 
 This file tells Ansible to automatically:
@@ -118,8 +125,8 @@ Expected result:
 
     @all:
      |--@aws_ec2:
-     |   |--10.0.2.234
-     |   |--10.0.2.116
+     |--10.0.2.234
+     |--10.0.2.116
 
 This confirms Ansible is discovering both private EC2s.
 
@@ -141,6 +148,12 @@ Expected:
 ***
 ##  Step 8: Run a command on all servers
 ```bash
-ansible -i aws_ec2.yml -m ping all
+ansible -i aws_ec2.yml all -a "hostname"
 ```
 ***
+
+##  Step 9: Test Inventory to see group
+
+```bash
+ansible-inventory -i inventory/aws_ec2.yml --graph
+```
