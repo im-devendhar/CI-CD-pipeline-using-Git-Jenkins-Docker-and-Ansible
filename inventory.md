@@ -125,10 +125,10 @@ This confirms Ansible is discovering both private EC2s.
 
 ***
 
-## ✅ Step 7: Test Connectivity (Ping)
+##  Step 7: Test Connectivity (Ping)
 
 ```bash
-ansible aws_ec2 -i inventory/aws_ec2.yml -m ping
+ansible -i aws_ec2.yml -m ping all
 ```
 
 Expected:
@@ -138,3 +138,9 @@ Expected:
 
 ***
 
+***
+##  Step 8: Run a command on all servers
+```bash
+ansible -i aws_ec2.yml -m ping all
+```
+***
