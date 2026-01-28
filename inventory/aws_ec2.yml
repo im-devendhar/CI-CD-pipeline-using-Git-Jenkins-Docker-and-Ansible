@@ -1,13 +1,21 @@
-plugin: aws_ec2
+plugin: plugin: amazon.aws.aws_ec2
 regions:
   - us-east-1
 
 filters:
-  tag:role: webserver  
+  instance-state-name: running
+  tag:role: webserver        
 
 hostnames:
   - private-ip-address
 
 compose:
-  ansible_user: "'ubuntu'"
-  ansible_ssh_private_key_file: "'/home/ubuntu/.ssh/prod.pem'"
+  ansible_host: private_ip_address
+  ansible_user: ubuntu
+  ansible_ssh_private_key_file: /home/ubuntu/.ssh/prod.pem
+
+# This will create a group literally named 'webserver' (from tag value)
+keyed_groups:
+  - key: tags.role
+    prefix: ''
+    separator: ''
