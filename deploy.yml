@@ -2,6 +2,9 @@
   hosts: webserver
   become: yes
 
+  vars:
+    image_name: "devenops641/myapp:{{ image_tag }}"
+
   tasks:
 
     - name: Install Docker and dependencies
@@ -18,12 +21,18 @@
         state: started
         enabled: yes
 
-    - name: Run Docker container from DockerHub
+    - name: Remove old container if exists
       docker_container:
         name: myapp-container
-        image: devenops641/myapp:v1
+        state: absent
+
+    - name: Run new Docker container
+      docker_container:
+        name: myapp-container
+        image: "{{ image_name }}"
         state: started
         restart_policy: always
+        pull: yes
         ports:
           - "8090:8090"
 

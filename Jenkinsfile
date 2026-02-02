@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "devenops641/myapp:v1"
+        IMAGE_NAME = "devenops641/myapp:${BUILD_NUMBER}"
+        LATEST_IMAGE = "devenops641/myapp:latest"
     }
 
     stages {
@@ -17,6 +18,7 @@ pipeline {
             steps {
                 sh '''
                 docker build -t $IMAGE_NAME .
+                docker tag $IMAGE_NAME $LATEST_IMAGE
                 '''
             }
         }
@@ -33,6 +35,7 @@ pipeline {
                     sh '''
                     docker login -u $DOCKER_USER -p $DOCKER_PASS
                     docker push $IMAGE_NAME
+                    docker push $LATEST_IMAGE
                     '''
                 }
             }
@@ -42,7 +45,10 @@ pipeline {
             steps {
                 sh '''
                 ANSIBLE_HOST_KEY_CHECKING=False \
-                ansible-playbook -i inventory/aws_ec2.yml deploy.yml
+                ansible-playbook \
+                -i inventory/aws_ec2.yml \
+                -e image_tag=${BUILD_NUMBER} \
+                deploy.yml
                 '''
             }
         }
