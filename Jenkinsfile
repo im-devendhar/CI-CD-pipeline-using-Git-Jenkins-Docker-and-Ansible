@@ -1,29 +1,51 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "devenops641/myapp:v1"
+    }
+
     stages {
-        stage('Build Docker Image') {
+
+        stage('Checkout Code') {
             steps {
-                script {
-                    docker.build('myapp:v1')
-                }
+                checkout scm
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Build Docker Image') {
             steps {
                 sh '''
-                    docker stop myapp-container || true
-                    docker rm myapp-container || true
-                    docker run -d -p 8090:8090 --name myapp-container myapp:v1
+                docker build -t $IMAGE_NAME .
                 '''
+            }
+        }
+
+        stage('Push Image to DockerHub') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh '''
+                    docker login -u $DOCKER_USER -p $DOCKER_PASS
+                    docker push $IMAGE_NAME
+                    '''
+                }
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                sh 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory/aws_ec2.yml deploy.yml'
+                sh '''
+                ANSIBLE_HOST_KEY_CHECKING=False \
+                ansible-playbook -i inventory/aws_ec2.yml deploy.yml
+                '''
             }
         }
     }
 }
+
