@@ -3,12 +3,30 @@
   become: yes
 
   tasks:
+    
+    - name: Install Docker and dependencies
+      apt:
+        name:
+          - docker.io
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    
     - name: Docker image on target servers
       docker_image:
         name: myapp
         tag: v1
         source: local
 
+    
     - name: Run Docker container
       docker_container:
         name: myapp-container
@@ -16,3 +34,4 @@
         state: started
         ports:
           - "8090:8090"
+
